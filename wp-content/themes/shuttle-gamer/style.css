@@ -1061,3 +1061,31 @@ input[type="submit"],
 h1, h2, h3 {
   letter-spacing: 0.5px;
 }
+
+/* TEAMMATE TEST - DO NOT DELETE */
+body {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+h1, h2, h3 {
+  color: #00ffcc !important;
+}
+
+a {
+  color: #ff4d6d !important;
+}
+
+.site-header,
+header {
+  background: #111111 !important;
+  border-bottom: 3px solid #00ffcc !important;
+}
+
+button,
+input[type="submit"],
+.wp-block-button__link {
+  background: #ff4d6d !important;
+  color: #ffffff !important;
+  border-radius: 10px;
+}
