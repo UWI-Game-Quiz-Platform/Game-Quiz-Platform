@@ -1034,3 +1034,30 @@ li.comment article {
   border: none;
   opacity: 1;
 }
+
+/* VS Code sync test */
+body {
+  background: #f5f7ff;
+}
+
+.site-header,
+header {
+  border-bottom: 4px solid #7c3aed;
+}
+
+a,
+.site-title a {
+  color: #7c3aed;
+}
+
+button,
+input[type="submit"],
+.wp-block-button__link {
+  background: #7c3aed;
+  color: #ffffff;
+  border-radius: 8px;
+}
+
+h1, h2, h3 {
+  letter-spacing: 0.5px;
+}
