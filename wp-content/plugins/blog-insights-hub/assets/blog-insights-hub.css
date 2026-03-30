@@ -1,0 +1,278 @@
+.bih-wrapper,
+.bih-linked-wrapper {
+    margin: 24px 0;
+    color: #eaeaea;
+}
+
+.bih-title,
+.bih-top-header h3,
+.bih-linked-item h4,
+.bih-card-title,
+.bih-top-card h4 {
+    margin: 0;
+}
+
+.bih-subtitle,
+.bih-top-header p,
+.bih-empty-state p,
+.bih-linked-item p,
+.bih-top-card p,
+.bih-excerpt {
+    color: #c7c7c7;
+}
+
+.bih-header,
+.bih-top-section,
+.bih-filter-bar,
+.bih-empty-state,
+.bih-linked-item,
+.bih-card,
+.bih-top-card {
+    background: rgba(16, 22, 36, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22);
+}
+
+.bih-header,
+.bih-top-section,
+.bih-empty-state,
+.bih-linked-wrapper {
+    padding: 22px;
+}
+
+.bih-filter-bar {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    padding: 18px;
+    margin: 18px 0 24px;
+}
+
+.bih-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bih-filter-field label {
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.bih-filter-field input,
+.bih-filter-field select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: #0e1524;
+    color: #fff;
+}
+
+.bih-filter-actions {
+    display: flex;
+    align-items: end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.bih-filter-actions button,
+.bih-filter-actions a,
+.bih-card-footer a,
+.bih-top-links a,
+.bih-linked-actions a {
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+.bih-filter-actions button,
+.bih-card-footer .bih-related-quiz,
+.bih-top-links a:last-child,
+.bih-linked-actions a:last-child {
+    background: #1f7aec;
+    color: #fff;
+    border: none;
+}
+
+.bih-filter-actions a,
+.bih-card-footer .bih-read-more,
+.bih-top-links a:first-child,
+.bih-linked-actions a:first-child {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.18);
+}
+
+.bih-filter-actions button:hover,
+.bih-filter-actions a:hover,
+.bih-card-footer a:hover,
+.bih-top-links a:hover,
+.bih-linked-actions a:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+}
+
+.bih-results-meta {
+    margin-bottom: 16px;
+    color: #d6d6d6;
+}
+
+.bih-top-section {
+    margin-bottom: 24px;
+}
+
+.bih-top-grid,
+.bih-grid {
+    display: grid;
+    gap: 18px;
+}
+
+.bih-top-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 18px;
+}
+
+.bih-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.bih-top-card,
+.bih-card {
+    overflow: hidden;
+}
+
+.bih-top-card {
+    padding: 18px;
+}
+
+.bih-top-meta,
+.bih-top-links,
+.bih-meta-row,
+.bih-card-footer,
+.bih-linked-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.bih-top-meta,
+.bih-meta-row {
+    font-size: 0.9rem;
+    color: #b8c0cc;
+    margin: 12px 0;
+}
+
+.bih-card-media img,
+.bih-placeholder {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+.bih-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #16213a, #243b6b);
+    color: #fff;
+}
+
+.bih-card-body {
+    padding: 18px;
+}
+
+.bih-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.bih-tags span,
+.bih-linked-quiz-name {
+    display: inline-block;
+    background: rgba(31, 122, 236, 0.15);
+    border: 1px solid rgba(31, 122, 236, 0.35);
+    color: #a9d0ff;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+}
+
+.bih-card-title,
+.bih-top-card h4,
+.bih-linked-item h4 {
+    font-size: 1.25rem;
+    line-height: 1.3;
+    margin-bottom: 12px;
+}
+
+.bih-card-title a,
+.bih-top-card h4 a,
+.bih-linked-item h4 a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.bih-linked-list {
+    display: grid;
+    gap: 16px;
+}
+
+.bih-linked-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    padding: 18px;
+    margin-top: 16px;
+}
+
+.bih-empty-state {
+    text-align: center;
+    margin-top: 18px;
+}
+
+.bih-pagination ul {
+    list-style: none;
+    display: flex;
+    gap: 8px;
+    padding: 0;
+    margin: 26px 0 0;
+    flex-wrap: wrap;
+}
+
+.bih-pagination a,
+.bih-pagination span {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    background: rgba(16, 22, 36, 0.95);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #fff;
+}
+
+.bih-pagination .current {
+    background: #1f7aec;
+    border-color: #1f7aec;
+}
+
+@media (max-width: 992px) {
+    .bih-filter-bar,
+    .bih-top-grid,
+    .bih-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bih-linked-item {
+        grid-template-columns: 1fr;
+    }
+}

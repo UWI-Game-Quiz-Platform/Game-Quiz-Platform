@@ -1,0 +1,262 @@
+.pdqi-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 0 40px;
+  color: #f3f7ff;
+}
+
+.pdqi-panel,
+.pdqi-stat-card,
+.pdqi-alert {
+  background: linear-gradient(180deg, #04122e 0%, #03102a 100%);
+  border: 1px solid rgba(255, 213, 0, 0.14);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+}
+
+.pdqi-panel {
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.pdqi-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.pdqi-eyebrow,
+.pdqi-panel h3,
+.pdqi-stat-label {
+  color: #ffd500;
+}
+
+.pdqi-eyebrow {
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.pdqi-panel h2,
+.pdqi-panel h3 {
+  margin: 0 0 10px;
+}
+
+.pdqi-panel p,
+.pdqi-list-meta,
+.pdqi-user-meta,
+.pdqi-list-side {
+  color: rgba(255,255,255,0.82);
+}
+
+.pdqi-user-meta {
+  min-width: 260px;
+  display: grid;
+  gap: 8px;
+}
+
+.pdqi-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.pdqi-stat-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pdqi-stat-label {
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pdqi-stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #00eaff;
+  line-height: 1;
+}
+
+.pdqi-grid-two {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+}
+
+.pdqi-list {
+  display: grid;
+  gap: 14px;
+}
+
+.pdqi-list-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+}
+
+.pdqi-list-main {
+  min-width: 0;
+}
+
+.pdqi-list-title {
+  color: #00eaff;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.pdqi-list-side {
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.pdqi-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.pdqi-status-pending {
+  background: rgba(255, 213, 0, 0.14);
+  color: #ffd500;
+  border: 1px solid rgba(255, 213, 0, 0.26);
+}
+
+.pdqi-status-publish {
+  background: rgba(0, 234, 255, 0.12);
+  color: #00eaff;
+  border: 1px solid rgba(0, 234, 255, 0.22);
+}
+
+.pdqi-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.pdqi-field-full {
+  grid-column: 1 / -1;
+}
+
+.pdqi-field label {
+  display: block;
+  margin-bottom: 8px;
+  color: #ffd500;
+  font-weight: 700;
+}
+
+.pdqi-field input,
+.pdqi-field select,
+.pdqi-field textarea {
+  width: 100%;
+  border-radius: 12px;
+  background: #061632;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #ffffff;
+  padding: 13px 14px;
+}
+
+.pdqi-field textarea {
+  resize: vertical;
+}
+
+.pdqi-button {
+  margin-top: 18px;
+  padding: 13px 20px;
+  border: none;
+  border-radius: 12px;
+  background: #ffd500;
+  color: #111827;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.pdqi-button:hover {
+  opacity: 0.95;
+}
+
+.pdqi-alert {
+  padding: 14px 18px;
+  margin-bottom: 18px;
+}
+
+.pdqi-alert-success {
+  border-color: rgba(0, 234, 255, 0.25);
+  color: #d9fbff;
+}
+
+.pdqi-alert-error {
+  border-color: rgba(255, 99, 99, 0.28);
+  color: #ffe2e2;
+}
+
+@media (max-width: 900px) {
+  .pdqi-hero,
+  .pdqi-grid-two,
+  .pdqi-stats-grid,
+  .pdqi-form-grid {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .pdqi-hero {
+    gap: 16px;
+  }
+
+  .pdqi-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pdqi-list-side,
+  .pdqi-badge {
+    white-space: normal;
+  }
+}
+
+.pdqi-form input[type="text"],
+.pdqi-form input[type="email"],
+.pdqi-form input[type="number"],
+.pdqi-form select,
+.pdqi-form textarea {
+    background: #03163f !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+.pdqi-form input[type="text"]:focus,
+.pdqi-form input[type="email"]:focus,
+.pdqi-form input[type="number"]:focus,
+.pdqi-form select:focus,
+.pdqi-form textarea:focus {
+    background: #03163f !important;
+    color: #ffffff !important;
+    border-color: #ffd400 !important;
+    box-shadow: 0 0 0 2px rgba(255, 212, 0, 0.15) !important;
+    outline: none !important;
+}
+
+.pdqi-form input[type="text"]::placeholder,
+.pdqi-form input[type="email"]::placeholder,
+.pdqi-form input[type="number"]::placeholder,
+.pdqi-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
