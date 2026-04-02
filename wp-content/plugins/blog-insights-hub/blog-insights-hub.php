@@ -2,7 +2,6 @@
 /**
  * Plugin Name: Blog Insights Hub
  * Description: Adds searchable, filterable Blog Insights sections for the Games Quiz Platform, including top insights and related quiz links.
- * Version: 1.0.0
  * Author: Josiah Phillip
  */
 

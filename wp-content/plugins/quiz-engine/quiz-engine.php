@@ -25,9 +25,7 @@ class Quiz_Engine {
         );
     }
 
-    // ============================================================
-    // HANDLE QUIZ SUBMISSION
-    // ============================================================
+    // Quiz Submision handling
     private function handle_submission() {
 
         if ( ! isset( $_POST['quiz_submit'] ) ) {
@@ -112,16 +110,14 @@ class Quiz_Engine {
         );
     }
 
-    // ============================================================
-    // RENDER RESULTS PAGE
-    // ============================================================
+    // Results rendering
     private function render_results( $data ) {
         wp_enqueue_style( 'quiz-engine-style' );
         ob_start();
         ?>
         <div class="qe-results-wrapper">
 
-            <!-- Score Card -->
+            <!-- Scoring card -->
             <div class="qe-score-card">
 
                 <div class="qe-result-icon">
@@ -229,9 +225,7 @@ class Quiz_Engine {
         return ob_get_clean();
     }
 
-    // ============================================================
-    // RENDER QUIZ ENGINE (Questions Form)
-    // ============================================================
+    // Render quiz engine questions form
     private function render_quiz( $quiz_id ) {
         wp_enqueue_style( 'quiz-engine-style' );
 
@@ -371,7 +365,7 @@ class Quiz_Engine {
         document.addEventListener('DOMContentLoaded', function() {
             var totalQ = <?php echo $total; ?>;
 
-            // ---- Timer ----
+            // Timer
             <?php if ( $time_limit ) : ?>
             var totalTime = <?php echo intval( $time_limit ); ?>;
             var timeLeft  = totalTime;
@@ -408,7 +402,7 @@ class Quiz_Engine {
             }, 1000);
             <?php endif; ?>
 
-            // ---- Answer Highlighting ----
+            // Answer Highlighting
             document.querySelectorAll('.qe-option-label').forEach(function(label) {
                 label.addEventListener('click', function() {
                     var card = this.closest('.qe-question-card');
@@ -420,7 +414,7 @@ class Quiz_Engine {
                 });
             });
 
-            // ---- Next ----
+            // Next 
             document.querySelectorAll('.qe-next').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     var current = parseInt(this.getAttribute('data-current'));
@@ -432,7 +426,7 @@ class Quiz_Engine {
                 });
             });
 
-            // ---- Previous ----
+            // Previous 
             document.querySelectorAll('.qe-prev').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     var current = parseInt(this.getAttribute('data-current'));
@@ -444,7 +438,7 @@ class Quiz_Engine {
                 });
             });
 
-            // ---- Submit Confirmation ----
+            // Submit Confirmation
             document.getElementById('qe-form').addEventListener('submit', function(e) {
                 var unanswered = 0;
                 document.querySelectorAll('.qe-question-card').forEach(function(card) {
@@ -464,9 +458,7 @@ class Quiz_Engine {
         return ob_get_clean();
     }
 
-    // ============================================================
-    // MAIN RENDER (shortcode entry point)
-    // ============================================================
+    // Main render function for shortcode
     public function render( $atts ) {
 
         $atts = shortcode_atts(
@@ -477,13 +469,13 @@ class Quiz_Engine {
 
         $quiz_id = $atts['id'] ? intval( $atts['id'] ) : get_queried_object_id();
 
-        // Handle submission first
+        // Handles submission first
         $submission = $this->handle_submission();
         if ( $submission !== null ) {
             return $this->render_results( $submission );
         }
 
-        // Must be logged in to take quiz
+        // Makes it so you must be logged in to take quiz
         if ( ! is_user_logged_in() ) {
             return '<div class="qe-login-notice">
                 <p>You must be logged in to take this quiz.</p>
