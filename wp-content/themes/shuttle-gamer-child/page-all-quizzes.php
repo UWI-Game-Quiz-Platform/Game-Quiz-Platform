@@ -6,16 +6,30 @@
 
 get_header(); ?>
 
-<!-- <div id="intro">
-    <div class="container">
-        <h1 class="page-title">All Quizzes</h1>
-        <?php
-        if ( function_exists( 'shuttle_breadcrumbs' ) ) {
-            shuttle_breadcrumbs();
-        }
-        ?>
-    </div>
-</div> -->
+<style>
+    /* Fix container sizing issues (prevents right overflow) */
+    .container {
+        width: 100% !important;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-left: 15px;
+        padding-right: 15px;
+        box-sizing: border-box;
+    }
+
+    .container * {
+        box-sizing: border-box;
+    }
+
+    /* Fix grid spacing + overflow */
+    .quiz-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        width: 100%;
+        margin-bottom: 50px;
+    }
+</style>
 
 <div id="content">
     <div class="container" style="padding: 60px 0;">
@@ -47,18 +61,25 @@ get_header(); ?>
                         border-radius:5px;
                         padding:8px 12px;">
                         <option value="">All Genres</option>
+
                         <?php
-                        $genres = get_terms( array(
+                        $genres = get_terms(array(
                             'taxonomy'   => 'quiz_genre',
                             'hide_empty' => false,
                         ));
-                        foreach ( $genres as $genre ) :
-                            $selected = ( isset($_GET['genre']) && $_GET['genre'] == $genre->slug ) ? 'selected' : '';
+
+                        if ( ! empty($genres) && ! is_wp_error($genres) ) :
+                            foreach ( $genres as $genre ) :
+                                $selected = ( isset($_GET['genre']) && $_GET['genre'] == $genre->slug ) ? 'selected' : '';
                         ?>
-                            <option value="<?php echo esc_attr( $genre->slug ); ?>" <?php echo $selected; ?>>
-                                <?php echo esc_html( $genre->name ); ?>
+                            <option value="<?php echo esc_attr($genre->slug); ?>" <?php echo $selected; ?>>
+                                <?php echo esc_html($genre->name); ?>
                             </option>
-                        <?php endforeach; ?>
+                        <?php
+                            endforeach;
+                        endif;
+                        ?>
+
                     </select>
                 </div>
 
@@ -75,18 +96,25 @@ get_header(); ?>
                         border-radius:5px;
                         padding:8px 12px;">
                         <option value="">All Difficulties</option>
+
                         <?php
-                        $difficulties = get_terms( array(
+                        $difficulties = get_terms(array(
                             'taxonomy'   => 'quiz_difficulty',
                             'hide_empty' => false,
                         ));
-                        foreach ( $difficulties as $diff ) :
-                            $selected = ( isset($_GET['difficulty']) && $_GET['difficulty'] == $diff->slug ) ? 'selected' : '';
+
+                        if ( ! empty($difficulties) && ! is_wp_error($difficulties) ) :
+                            foreach ( $difficulties as $diff ) :
+                                $selected = ( isset($_GET['difficulty']) && $_GET['difficulty'] == $diff->slug ) ? 'selected' : '';
                         ?>
-                            <option value="<?php echo esc_attr( $diff->slug ); ?>" <?php echo $selected; ?>>
-                                <?php echo esc_html( $diff->name ); ?>
+                            <option value="<?php echo esc_attr($diff->slug); ?>" <?php echo $selected; ?>>
+                                <?php echo esc_html($diff->name); ?>
                             </option>
-                        <?php endforeach; ?>
+                        <?php
+                            endforeach;
+                        endif;
+                        ?>
+
                     </select>
                 </div>
 
@@ -125,7 +153,7 @@ get_header(); ?>
 
                 <!-- Reset -->
                 <div style="display:flex; align-items:flex-end;">
-                    <a href="<?php echo get_permalink(); ?>" style="
+                    <a href="<?php echo esc_url(get_permalink()); ?>" style="
                         background:rgba(255,255,255,0.1);
                         color:#fff;
                         border-radius:5px;
@@ -142,22 +170,28 @@ get_header(); ?>
 
         <?php
         // ===== BUILD QUERY ARGS =====
-        $paged     = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
+        $paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
+
+        // Also allow ?paged=2
+        if ( isset($_GET['paged']) ) {
+            $paged = intval($_GET['paged']);
+        }
+
         $tax_query = array( 'relation' => 'AND' );
 
-        if ( ! empty( $_GET['genre'] ) ) {
+        if ( ! empty($_GET['genre']) ) {
             $tax_query[] = array(
                 'taxonomy' => 'quiz_genre',
                 'field'    => 'slug',
-                'terms'    => sanitize_text_field( $_GET['genre'] ),
+                'terms'    => sanitize_text_field($_GET['genre']),
             );
         }
 
-        if ( ! empty( $_GET['difficulty'] ) ) {
+        if ( ! empty($_GET['difficulty']) ) {
             $tax_query[] = array(
                 'taxonomy' => 'quiz_difficulty',
                 'field'    => 'slug',
-                'terms'    => sanitize_text_field( $_GET['difficulty'] ),
+                'terms'    => sanitize_text_field($_GET['difficulty']),
             );
         }
 
@@ -170,32 +204,28 @@ get_header(); ?>
             'order'          => 'DESC',
         );
 
-        if ( ! empty( $_GET['quiz_search'] ) ) {
-            $args['s'] = sanitize_text_field( $_GET['quiz_search'] );
+        if ( ! empty($_GET['quiz_search']) ) {
+            $args['s'] = sanitize_text_field($_GET['quiz_search']);
         }
 
-        if ( count( $tax_query ) > 1 ) {
+        if ( count($tax_query) > 1 ) {
             $args['tax_query'] = $tax_query;
         }
 
-        $quiz_query = new WP_Query( $args );
+        $quiz_query = new WP_Query($args);
         ?>
 
         <?php if ( $quiz_query->have_posts() ) : ?>
 
-            <!-- Results Count -->
             <p style="color:rgba(255,255,255,0.6); margin-bottom:30px;">
-                Showing <?php echo $quiz_query->found_posts; ?> quiz<?php echo $quiz_query->found_posts != 1 ? 'zes' : ''; ?>
+                Showing <?php echo esc_html($quiz_query->found_posts); ?> quiz<?php echo $quiz_query->found_posts != 1 ? 'zes' : ''; ?>
             </p>
 
             <!-- ===== QUIZ GRID ===== -->
-            <div class="quiz-grid" style="
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 30px;
-                margin-bottom: 50px;">
+            <div class="quiz-grid">
 
                 <?php while ( $quiz_query->have_posts() ) : $quiz_query->the_post();
+
                     $time_limit      = get_post_meta( get_the_ID(), '_quiz_time_limit', true );
                     $total_questions = get_post_meta( get_the_ID(), '_quiz_total_questions', true );
                     $passing_score   = get_post_meta( get_the_ID(), '_quiz_passing_score', true );
@@ -203,7 +233,6 @@ get_header(); ?>
                     $difficulties    = get_the_terms( get_the_ID(), 'quiz_difficulty' );
                     $difficulty_name = $difficulties ? $difficulties[0]->name : 'N/A';
 
-                    // Difficulty color
                     $diff_color = '#13aff0';
                     if ( $difficulty_name == 'Easy' )   $diff_color = '#28a745';
                     if ( $difficulty_name == 'Medium' ) $diff_color = '#ffc107';
@@ -237,33 +266,31 @@ get_header(); ?>
                         </div>
                     <?php endif; ?>
 
-                    <!-- Card Body -->
                     <div style="padding:25px; flex:1; display:flex; flex-direction:column;">
 
-                        <!-- Badges -->
                         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
                             <span style="
-                                background:<?php echo $diff_color; ?>;
+                                background:<?php echo esc_attr($diff_color); ?>;
                                 color:#fff;
                                 padding:3px 12px;
                                 border-radius:20px;
                                 font-size:12px;
                                 font-weight:600;">
-                                <?php echo esc_html( $difficulty_name ); ?>
+                                <?php echo esc_html($difficulty_name); ?>
                             </span>
-                            <?php if ( $genres ) : ?>
+
+                            <?php if ( $genres && ! is_wp_error($genres) ) : ?>
                                 <span style="
                                     background:rgba(255,255,255,0.1);
                                     color:#fff;
                                     padding:3px 12px;
                                     border-radius:20px;
                                     font-size:12px;">
-                                    <?php echo esc_html( $genres[0]->name ); ?>
+                                    <?php echo esc_html($genres[0]->name); ?>
                                 </span>
                             <?php endif; ?>
                         </div>
 
-                        <!-- Title -->
                         <h3 style="
                             color:#fff;
                             font-size:18px;
@@ -273,16 +300,14 @@ get_header(); ?>
                             <?php the_title(); ?>
                         </h3>
 
-                        <!-- Excerpt -->
                         <p style="
                             color:rgba(255,255,255,0.6);
                             font-size:14px;
                             margin-bottom:20px;
                             flex:1;">
-                            <?php echo wp_trim_words( get_the_excerpt(), 15, '...' ); ?>
+                            <?php echo esc_html(wp_trim_words(get_the_excerpt(), 15, '...')); ?>
                         </p>
 
-                        <!-- Stats Row -->
                         <div style="
                             display:flex;
                             gap:15px;
@@ -290,18 +315,21 @@ get_header(); ?>
                             padding:12px;
                             background:rgba(255,255,255,0.05);
                             border-radius:5px;">
+
                             <div style="text-align:center; flex:1;">
                                 <div style="color:#13aff0; font-size:18px; font-weight:700;">
                                     <?php echo $total_questions ? esc_html($total_questions) : '?'; ?>
                                 </div>
                                 <div style="color:rgba(255,255,255,0.5); font-size:11px;">Questions</div>
                             </div>
+
                             <div style="text-align:center; flex:1;">
                                 <div style="color:#13aff0; font-size:18px; font-weight:700;">
-                                    <?php echo $time_limit ? floor($time_limit/60).'m' : '?'; ?>
+                                    <?php echo $time_limit ? esc_html(floor($time_limit/60).'m') : '?'; ?>
                                 </div>
                                 <div style="color:rgba(255,255,255,0.5); font-size:11px;">Time Limit</div>
                             </div>
+
                             <div style="text-align:center; flex:1;">
                                 <div style="color:#13aff0; font-size:18px; font-weight:700;">
                                     <?php echo $passing_score ? esc_html($passing_score).'%' : '?'; ?>
@@ -310,7 +338,6 @@ get_header(); ?>
                             </div>
                         </div>
 
-                        <!-- Take Quiz Button -->
                         <a href="<?php the_permalink(); ?>" style="
                             display:block;
                             text-align:center;
@@ -320,8 +347,7 @@ get_header(); ?>
                             border-radius:5px;
                             text-decoration:none;
                             font-weight:600;
-                            font-size:14px;
-                            transition:all 0.3s;">
+                            font-size:14px;">
                             Take Quiz →
                         </a>
 
@@ -336,10 +362,10 @@ get_header(); ?>
                 <div class="navigation pagination" style="text-align:center;">
                     <div class="nav-links">
                         <?php
-                        echo paginate_links( array(
-                            'base'      => str_replace( 999999999, '%#%', esc_url( get_pagenum_link( 999999999 ) ) ),
-                            'format'    => '?paged=%#%',
-                            'current'   => max( 1, $paged ),
+                        echo paginate_links(array(
+                            'base'      => add_query_arg('paged', '%#%'),
+                            'format'    => '',
+                            'current'   => max(1, $paged),
                             'total'     => $quiz_query->max_num_pages,
                             'prev_text' => '← Prev',
                             'next_text' => 'Next →',
@@ -352,7 +378,7 @@ get_header(); ?>
             <?php wp_reset_postdata(); ?>
 
         <?php else : ?>
-            <!-- No Quizzes Found -->
+
             <div style="
                 text-align:center;
                 padding:80px 20px;
@@ -364,7 +390,7 @@ get_header(); ?>
                 <p style="color:rgba(255,255,255,0.5);">
                     Try adjusting your filters or check back later.
                 </p>
-                <a href="<?php echo get_permalink(); ?>" style="
+                <a href="<?php echo esc_url(get_permalink()); ?>" style="
                     display:inline-block;
                     margin-top:20px;
                     background:#13aff0;
@@ -376,6 +402,7 @@ get_header(); ?>
                     View All Quizzes
                 </a>
             </div>
+
         <?php endif; ?>
 
     </div>

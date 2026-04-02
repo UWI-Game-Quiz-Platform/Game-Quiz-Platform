@@ -7,6 +7,64 @@
 get_header(); ?>
 
 <!-- ============================================================
+     GLOBAL GRID + HEADER FIXES
+     ============================================================ -->
+<style>
+    /* Fix dropdown menus going behind hero */
+    header, .site-header, .main-navigation, nav {
+        position: relative;
+        z-index: 9999;
+    }
+
+    /* Fix container sizing issues */
+    .container {
+        width: 100% !important;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-left: 15px;
+        padding-right: 15px;
+        box-sizing: border-box;
+    }
+
+    .container * {
+        box-sizing: border-box;
+    }
+
+    /* Featured Quizzes Grid Fix */
+    .featured-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        width: 100%;
+    }
+
+    /* Latest Insights Grid Fix */
+    .insights-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        width: 100%;
+    }
+
+    /* How It Works Grid Fix */
+    .how-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 30px;
+        width: 100%;
+    }
+
+    /* Force cards to stretch evenly */
+    .featured-grid > div,
+    .insights-grid > div,
+    .how-grid > div {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+
+<!-- ============================================================
      HERO SECTION
      ============================================================ -->
 <div style="
@@ -14,7 +72,7 @@ get_header(); ?>
     padding: 100px 0 80px;
     text-align: center;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     border-bottom: 1px solid rgba(255,255,255,0.1);">
 
     <!-- Background glow effects -->
@@ -76,8 +134,9 @@ get_header(); ?>
                 transition:all 0.3s;">
                 🎮 Browse All Quizzes
             </a>
+
             <?php if ( ! is_user_logged_in() ) : ?>
-            <a href="<?php echo wp_registration_url(); ?>" style="
+            <a href="<?php echo esc_url(wp_registration_url()); ?>" style="
                 background:rgba(255,255,255,0.1);
                 color:#fff;
                 padding:15px 35px;
@@ -112,35 +171,41 @@ get_header(); ?>
         $total_scores     = wp_count_posts('leaderboard_entry')->publish;
         $total_players    = count_users();
         ?>
+
         <div style="
-            display:inline-grid;
-            grid-template-columns:repeat(4,1fr);
+            display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));
             gap:1px;
             background:rgba(255,255,255,0.1);
             border-radius:12px;
             overflow:hidden;
-            border:1px solid rgba(255,255,255,0.1);">
+            border:1px solid rgba(255,255,255,0.1);
+            max-width:900px;
+            margin:0 auto;">
+
             <?php
             $stats = array(
-                array( 'value' => $total_quizzes,             'label' => 'Quizzes',       'icon' => '🎮' ),
-                array( 'value' => $total_questions,           'label' => 'Questions',     'icon' => '❓' ),
-                array( 'value' => $total_scores,              'label' => 'Scores Logged', 'icon' => '📊' ),
-                array( 'value' => $total_players['total_users'], 'label' => 'Players',    'icon' => '👥' ),
+                array( 'value' => $total_quizzes,                'label' => 'Quizzes',       'icon' => '🎮' ),
+                array( 'value' => $total_questions,              'label' => 'Questions',     'icon' => '❓' ),
+                array( 'value' => $total_scores,                 'label' => 'Scores Logged', 'icon' => '📊' ),
+                array( 'value' => $total_players['total_users'], 'label' => 'Players',       'icon' => '👥' ),
             );
+
             foreach ( $stats as $stat ) : ?>
                 <div style="
                     background:#1f2326;
                     padding:20px 30px;
                     text-align:center;">
-                    <div style="font-size:22px; margin-bottom:4px;"><?php echo $stat['icon']; ?></div>
+                    <div style="font-size:22px; margin-bottom:4px;"><?php echo esc_html($stat['icon']); ?></div>
                     <div style="color:#13aff0; font-size:28px; font-weight:800; line-height:1;">
-                        <?php echo $stat['value']; ?>
+                        <?php echo esc_html($stat['value']); ?>
                     </div>
                     <div style="color:rgba(255,255,255,0.5); font-size:12px; margin-top:4px; text-transform:uppercase; letter-spacing:1px;">
-                        <?php echo $stat['label']; ?>
+                        <?php echo esc_html($stat['label']); ?>
                     </div>
                 </div>
             <?php endforeach; ?>
+
         </div>
 
     </div>
@@ -162,7 +227,6 @@ get_header(); ?>
         </div>
 
         <?php
-        // Query latest 3 published quizzes
         $featured_quizzes = new WP_Query( array(
             'post_type'      => 'quiz',
             'posts_per_page' => 3,
@@ -173,11 +237,10 @@ get_header(); ?>
         ?>
 
         <?php if ( $featured_quizzes->have_posts() ) : ?>
-        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:25px; margin-bottom:40px;">
+        <div class="featured-grid" style="margin-bottom:40px;">
             <?php while ( $featured_quizzes->have_posts() ) : $featured_quizzes->the_post();
                 $time_limit      = get_post_meta( get_the_ID(), '_quiz_time_limit', true );
                 $total_questions = get_post_meta( get_the_ID(), '_quiz_total_questions', true );
-                $passing_score   = get_post_meta( get_the_ID(), '_quiz_passing_score', true );
                 $difficulties    = get_the_terms( get_the_ID(), 'quiz_difficulty' );
                 $genres          = get_the_terms( get_the_ID(), 'quiz_genre' );
                 $difficulty_name = $difficulties ? $difficulties[0]->name : 'N/A';
@@ -192,11 +255,9 @@ get_header(); ?>
                 border:1px solid rgba(255,255,255,0.12);
                 border-radius:12px;
                 overflow:hidden;
-                transition:transform 0.3s, box-shadow 0.3s;
                 display:flex;
                 flex-direction:column;">
 
-                <!-- Thumbnail -->
                 <?php if ( has_post_thumbnail() ) : ?>
                     <div style="height:180px; overflow:hidden;">
                         <?php the_post_thumbnail('medium', array('style'=>'width:100%;height:100%;object-fit:cover;')); ?>
@@ -212,9 +273,8 @@ get_header(); ?>
 
                 <div style="padding:25px; flex:1; display:flex; flex-direction:column;">
 
-                    <!-- Badges -->
                     <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-                        <span style="background:<?php echo $diff_color; ?>; color:#fff; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600;">
+                        <span style="background:<?php echo esc_attr($diff_color); ?>; color:#fff; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600;">
                             <?php echo esc_html($difficulty_name); ?>
                         </span>
                         <?php if ($genres) : ?>
@@ -228,13 +288,12 @@ get_header(); ?>
                         <?php the_title(); ?>
                     </h3>
 
-                    <!-- Mini Stats -->
-                    <div style="display:flex; gap:15px; margin-bottom:20px;">
+                    <div style="display:flex; gap:15px; margin-bottom:20px; flex-wrap:wrap;">
                         <span style="color:rgba(255,255,255,0.5); font-size:13px;">
-                            ❓ <?php echo $total_questions ?: '?'; ?> Questions
+                            ❓ <?php echo esc_html($total_questions ?: '?'); ?> Questions
                         </span>
                         <span style="color:rgba(255,255,255,0.5); font-size:13px;">
-                            ⏱️ <?php echo $time_limit ? floor($time_limit/60).'m' : '?'; ?>
+                            ⏱️ <?php echo esc_html($time_limit ? floor($time_limit/60).'m' : '?'); ?>
                         </span>
                     </div>
 
@@ -285,12 +344,12 @@ get_header(); ?>
 
         <?php
         $genre_icons = array(
-            'action'     => '⚔️',
-            'rpg'        => '🧙',
-            'sports'     => '⚽',
-            'fps'        => '🔫',
-            'strategy'   => '♟️',
-            'multiplayer'=> '👥',
+            'action'      => '⚔️',
+            'rpg'         => '🧙',
+            'sports'      => '⚽',
+            'fps'         => '🔫',
+            'strategy'    => '♟️',
+            'multiplayer' => '👥',
         );
 
         $genres = get_terms( array(
@@ -315,12 +374,12 @@ get_header(); ?>
                 text-align:center;
                 text-decoration:none;
                 transition:all 0.3s;">
-                <div style="font-size:36px; margin-bottom:10px;"><?php echo $icon; ?></div>
+                <div style="font-size:36px; margin-bottom:10px;"><?php echo esc_html($icon); ?></div>
                 <div style="color:#fff; font-weight:700; font-size:15px; margin-bottom:4px;">
                     <?php echo esc_html($genre->name); ?>
                 </div>
                 <div style="color:rgba(255,255,255,0.4); font-size:12px;">
-                    <?php echo $count; ?> quiz<?php echo $count != 1 ? 'zes' : ''; ?>
+                    <?php echo esc_html($count); ?> quiz<?php echo $count != 1 ? 'zes' : ''; ?>
                 </div>
             </a>
             <?php endforeach; ?>
@@ -345,7 +404,7 @@ get_header(); ?>
             </p>
         </div>
 
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:30px;">
+        <div class="how-grid">
             <?php
             $steps = array(
                 array(
@@ -367,6 +426,7 @@ get_header(); ?>
                     'desc'   => 'Submit your answers, get your score instantly, and climb the leaderboard.',
                 ),
             );
+
             foreach ( $steps as $step ) : ?>
             <div style="
                 background:#212529;
@@ -375,22 +435,26 @@ get_header(); ?>
                 padding:35px 30px;
                 text-align:center;
                 position:relative;">
+
                 <div style="
                     position:absolute; top:-15px; left:50%; transform:translateX(-50%);
                     background:#13aff0; color:#fff;
                     width:32px; height:32px; border-radius:50%;
                     display:flex; align-items:center; justify-content:center;
                     font-size:12px; font-weight:800;">
-                    <?php echo $step['number']; ?>
+                    <?php echo esc_html($step['number']); ?>
                 </div>
+
                 <div style="font-size:48px; margin-bottom:15px; margin-top:10px;">
-                    <?php echo $step['icon']; ?>
+                    <?php echo esc_html($step['icon']); ?>
                 </div>
+
                 <h3 style="color:#fff; font-size:18px; font-weight:700; margin-bottom:12px; text-transform:none;">
-                    <?php echo $step['title']; ?>
+                    <?php echo esc_html($step['title']); ?>
                 </h3>
+
                 <p style="color:rgba(255,255,255,0.55); font-size:14px; line-height:1.7; margin:0;">
-                    <?php echo $step['desc']; ?>
+                    <?php echo esc_html($step['desc']); ?>
                 </p>
             </div>
             <?php endforeach; ?>
@@ -433,6 +497,7 @@ get_header(); ?>
             <?php if ( $top_scores->have_posts() ) :
                 $rank = 1;
                 $medals = array( 1 => '🥇', 2 => '🥈', 3 => '🥉' );
+
                 while ( $top_scores->have_posts() ) : $top_scores->the_post();
                     $user_id    = get_post_meta( get_the_ID(), '_leaderboard_user_id', true );
                     $quiz_id    = get_post_meta( get_the_ID(), '_leaderboard_quiz_id', true );
@@ -450,18 +515,16 @@ get_header(); ?>
                     border:1px solid rgba(255,255,255,0.1);
                     border-radius:10px;
                     padding:15px 20px;
-                    margin-bottom:12px;">
+                    margin-bottom:12px;
+                    flex-wrap:wrap;">
 
-                    <!-- Rank -->
                     <div style="font-size:24px; width:36px; text-align:center; flex-shrink:0;">
-                        <?php echo isset($medals[$rank]) ? $medals[$rank] : '#'.$rank; ?>
+                        <?php echo esc_html(isset($medals[$rank]) ? $medals[$rank] : '#'.$rank); ?>
                     </div>
 
-                    <!-- Avatar -->
                     <img src="<?php echo esc_url($avatar); ?>" style="width:40px; height:40px; border-radius:50%; flex-shrink:0;" />
 
-                    <!-- Info -->
-                    <div style="flex:1;">
+                    <div style="flex:1; min-width:200px;">
                         <div style="color:#fff; font-weight:700; font-size:15px;">
                             <?php echo esc_html($username); ?>
                         </div>
@@ -470,13 +533,12 @@ get_header(); ?>
                         </div>
                     </div>
 
-                    <!-- Score -->
-                    <div style="text-align:right;">
+                    <div style="text-align:right; min-width:120px;">
                         <div style="color:#13aff0; font-weight:800; font-size:22px;">
-                            <?php echo $percentage; ?>%
+                            <?php echo esc_html($percentage); ?>%
                         </div>
                         <div style="color:rgba(255,255,255,0.4); font-size:12px;">
-                            <?php echo $score; ?>/<?php echo $total; ?> correct
+                            <?php echo esc_html($score); ?>/<?php echo esc_html($total); ?> correct
                         </div>
                     </div>
 
@@ -537,7 +599,7 @@ get_header(); ?>
         ?>
 
         <?php if ( $insights->have_posts() ) : ?>
-        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:25px; margin-bottom:40px;">
+        <div class="insights-grid" style="margin-bottom:40px;">
             <?php while ( $insights->have_posts() ) : $insights->the_post();
                 $read_time       = get_post_meta( get_the_ID(), '_insight_read_time', true );
                 $related_quiz_id = get_post_meta( get_the_ID(), '_insight_related_quiz', true );
@@ -548,7 +610,8 @@ get_header(); ?>
                 border:1px solid rgba(255,255,255,0.12);
                 border-radius:12px;
                 overflow:hidden;
-                display:flex; flex-direction:column;">
+                display:flex;
+                flex-direction:column;">
 
                 <?php if ( has_post_thumbnail() ) : ?>
                     <div style="height:160px; overflow:hidden;">
@@ -559,13 +622,13 @@ get_header(); ?>
                 <?php endif; ?>
 
                 <div style="padding:20px; flex:1; display:flex; flex-direction:column;">
-                    <div style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                    <div style="display:flex; gap:10px; margin-bottom:10px; align-items:center; flex-wrap:wrap;">
                         <span style="color:rgba(255,255,255,0.4); font-size:12px;">
-                            <?php echo get_the_date(); ?>
+                            <?php echo esc_html(get_the_date()); ?>
                         </span>
                         <?php if ( $read_time ) : ?>
                         <span style="color:rgba(255,255,255,0.4); font-size:12px;">
-                            · <?php echo $read_time; ?> min read
+                            · <?php echo esc_html($read_time); ?> min read
                         </span>
                         <?php endif; ?>
                     </div>
@@ -582,7 +645,7 @@ get_header(); ?>
                         <?php the_title(); ?>
                     </h3>
 
-                    <div style="display:flex; gap:10px; margin-top:auto;">
+                    <div style="display:flex; gap:10px; margin-top:auto; flex-wrap:wrap;">
                         <a href="<?php the_permalink(); ?>" style="
                             flex:1; text-align:center;
                             background:#13aff0; color:#fff;
@@ -590,8 +653,9 @@ get_header(); ?>
                             text-decoration:none; font-weight:600; font-size:13px;">
                             Read More
                         </a>
+
                         <?php if ( $related_quiz_id ) : ?>
-                        <a href="<?php echo get_permalink($related_quiz_id); ?>" style="
+                        <a href="<?php echo esc_url(get_permalink($related_quiz_id)); ?>" style="
                             flex:1; text-align:center;
                             background:rgba(255,255,255,0.08); color:#fff;
                             padding:9px; border-radius:5px;
@@ -637,7 +701,7 @@ get_header(); ?>
         <p style="color:rgba(255,255,255,0.6); font-size:17px; margin-bottom:35px; max-width:500px; margin-left:auto; margin-right:auto;">
             Join thousands of gamers competing on the leaderboard. Register free and start playing today.
         </p>
-        <a href="<?php echo wp_registration_url(); ?>" style="
+        <a href="<?php echo esc_url(wp_registration_url()); ?>" style="
             display:inline-block;
             background:#13aff0; color:#fff;
             padding:16px 45px; border-radius:8px;
