@@ -1,17 +1,26 @@
 <?php
+/**
+ * Games Quiz Platform - INFO3602
+ * Team: Varune Rampersad, Josiah Phillip, Ijaaz Sisarran
+ * File: taxonomy-quiz_genre.php
+ */
 get_header();
 
+// Get the current genre being viewed
 $term = get_queried_object();
 ?>
 
 <div style="background:#1a1d21; padding:80px 0;">
     <div class="container">
-
+        <!--
+        Display the name of the selected genre at the top of the page
+        -->
         <h1 style="color:#fff; font-size:40px; font-weight:900; margin-bottom:30px;">
             Genre: <?php echo esc_html($term->name); ?>
         </h1>
 
         <?php
+        // Build a query to fetch quizzes that belong to this specific genre
         $args = array(
             'post_type'      => 'quiz',
             'posts_per_page' => 9,
@@ -56,7 +65,7 @@ $term = get_queried_object();
                             </a>
                         </div>
                     </div>
-
+                 // Reset global post data after custom query           
                 <?php endwhile; wp_reset_postdata(); ?>
             </div>
 

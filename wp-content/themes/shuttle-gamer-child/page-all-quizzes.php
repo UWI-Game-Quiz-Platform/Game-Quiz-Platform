@@ -1,7 +1,8 @@
 <?php
 /**
- * Template Name: All Quizzes Page
- * Description: Displays all quizzes with genre and difficulty filters + pagination
+ * Games Quiz Platform - INFO3602
+ * Team: Varune Rampersad, Josiah Phillip, Ijaaz Sisarran
+ * File: page-all-quizzes.php
  */
 
 get_header(); ?>
@@ -34,7 +35,7 @@ get_header(); ?>
 <div id="content">
     <div class="container" style="padding: 60px 0;">
 
-        <!-- ===== FILTER BAR ===== -->
+        <!-- enables filtering of quizzes -->
         <div class="quiz-filter-bar" style="
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.15);
@@ -48,7 +49,7 @@ get_header(); ?>
 
             <form method="GET" action="" style="display:flex; flex-wrap:wrap; gap:15px; width:100%;">
 
-                <!-- Genre Filter -->
+                <!-- allows the user to filter by genre -->
                 <div style="flex:1; min-width:180px;">
                     <label style="color:#fff; display:block; margin-bottom:6px; font-weight:600;">
                         Genre
@@ -83,7 +84,7 @@ get_header(); ?>
                     </select>
                 </div>
 
-                <!-- Difficulty Filter -->
+                <!-- allows you to filter by difficulty -->
                 <div style="flex:1; min-width:180px;">
                     <label style="color:#fff; display:block; margin-bottom:6px; font-weight:600;">
                         Difficulty
@@ -118,7 +119,7 @@ get_header(); ?>
                     </select>
                 </div>
 
-                <!-- Search -->
+                <!-- Search implementation -->
                 <div style="flex:2; min-width:200px;">
                     <label style="color:#fff; display:block; margin-bottom:6px; font-weight:600;">
                         Search
@@ -136,7 +137,7 @@ get_header(); ?>
                             box-sizing:border-box;" />
                 </div>
 
-                <!-- Submit Button -->
+                <!-- sets up our submit button -->
                 <div style="display:flex; align-items:flex-end;">
                     <button type="submit" style="
                         background:#13aff0;
@@ -151,7 +152,7 @@ get_header(); ?>
                     </button>
                 </div>
 
-                <!-- Reset -->
+                <!-- allows reset -->
                 <div style="display:flex; align-items:flex-end;">
                     <a href="<?php echo esc_url(get_permalink()); ?>" style="
                         background:rgba(255,255,255,0.1);
@@ -169,10 +170,10 @@ get_header(); ?>
         </div>
 
         <?php
-        // ===== BUILD QUERY ARGS =====
+        // builds query args based on filters and search, then runs WP_Query to fetch quizzes
         $paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
 
-        // Also allow ?paged=2
+        
         if ( isset($_GET['paged']) ) {
             $paged = intval($_GET['paged']);
         }
@@ -221,7 +222,7 @@ get_header(); ?>
                 Showing <?php echo esc_html($quiz_query->found_posts); ?> quiz<?php echo $quiz_query->found_posts != 1 ? 'zes' : ''; ?>
             </p>
 
-            <!-- ===== QUIZ GRID ===== -->
+            
             <div class="quiz-grid">
 
                 <?php while ( $quiz_query->have_posts() ) : $quiz_query->the_post();
@@ -248,7 +249,7 @@ get_header(); ?>
                     display: flex;
                     flex-direction: column;">
 
-                    <!-- Thumbnail -->
+                    <!-- controls our thumbnails -->
                     <?php if ( has_post_thumbnail() ) : ?>
                         <div style="height:180px; overflow:hidden;">
                             <?php the_post_thumbnail('medium', array(
@@ -357,7 +358,7 @@ get_header(); ?>
                 <?php endwhile; ?>
             </div>
 
-            <!-- ===== PAGINATION ===== -->
+            <!-- display our pagination -->
             <?php if ( $quiz_query->max_num_pages > 1 ) : ?>
                 <div class="navigation pagination" style="text-align:center;">
                     <div class="nav-links">

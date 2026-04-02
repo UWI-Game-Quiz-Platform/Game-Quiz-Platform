@@ -1,14 +1,17 @@
 <?php
 /**
- * Template Name: Home Page
- * Description: Main landing page for the Games Quiz Platform
+ * Games Quiz Platform - INFO3602
+ * Team: Varune Rampersad, Josiah Phillip, Ijaaz Sisarran
+ * File: homepage.php
  */
 
 get_header(); ?>
 
-<!-- ============================================================
-     GLOBAL GRID + HEADER FIXES
-     ============================================================ -->
+    <!--
+    This section fixes layout issues from the theme.
+    It ensures dropdown menus appear correctly and
+    sets up responsive grid layouts for all sections.
+    -->
 <style>
     /* Fix dropdown menus going behind hero */
     header, .site-header, .main-navigation, nav {
@@ -64,9 +67,11 @@ get_header(); ?>
     }
 </style>
 
-<!-- ============================================================
-     HERO SECTION
-     ============================================================ -->
+<!--
+    Hero section (top banner users see first).
+    Introduces the platform, shows main message,
+    and includes buttons for navigation (quizzes, register, leaderboard).
+    -->
 <div style="
     background: linear-gradient(135deg, #0d1117 0%, #1a1a2e 50%, #16213e 100%);
     padding: 100px 0 80px;
@@ -75,7 +80,7 @@ get_header(); ?>
     overflow: visible;
     border-bottom: 1px solid rgba(255,255,255,0.1);">
 
-    <!-- Background glow effects -->
+    
     <div style="
         position:absolute; top:-100px; left:50%;
         transform:translateX(-50%);
@@ -121,7 +126,7 @@ get_header(); ?>
             Compete on the leaderboard and prove you're the ultimate gamer.
         </p>
 
-        <!-- CTA Buttons -->
+        
         <div style="display:flex; gap:15px; justify-content:center; flex-wrap:wrap; margin-bottom:60px;">
             <a href="<?php echo esc_url( home_url('/quizzes') ); ?>" style="
                 background:#13aff0;
@@ -164,7 +169,7 @@ get_header(); ?>
             <?php endif; ?>
         </div>
 
-        <!-- Quick Stats -->
+        
         <?php
         $total_quizzes    = wp_count_posts('quiz')->publish;
         $total_questions  = wp_count_posts('quiz_question')->publish;
@@ -211,9 +216,10 @@ get_header(); ?>
     </div>
 </div>
 
-<!-- ============================================================
-     FEATURED QUIZZES SECTION
-     ============================================================ -->
+<!--
+    Displays the most recent quizzes from the database.
+    Uses WP_Query to dynamically pull and show quiz cards.
+    -->
 <div style="background:#1a1d21; padding:80px 0;">
     <div class="container">
 
@@ -327,9 +333,10 @@ get_header(); ?>
     </div>
 </div>
 
-<!-- ============================================================
-     GENRE CATEGORIES SECTION
-     ============================================================ -->
+<!--
+    Shows all quiz genres so users can filter quizzes easily.
+    Each genre links to a filtered quizzes page.
+    -->
 <div style="background:#212529; padding:80px 0;">
     <div class="container">
 
@@ -389,9 +396,10 @@ get_header(); ?>
     </div>
 </div>
 
-<!-- ============================================================
-     HOW IT WORKS SECTION
-     ============================================================ -->
+<!--
+    Simple explanation of how users interact with the platform.
+    Helps new users understand the flow quickly.
+    -->
 <div style="background:#1a1d21; padding:80px 0;">
     <div class="container">
 
@@ -463,9 +471,9 @@ get_header(); ?>
     </div>
 </div>
 
-<!-- ============================================================
-     LIVE LEADERBOARD PREVIEW SECTION
-     ============================================================ -->
+<!--
+    Displays top scoring players for the past week, Data is pulled from leaderboard entries and sorted by score.
+    -->
 <div style="background:#212529; padding:80px 0;">
     <div class="container">
 
@@ -573,9 +581,9 @@ get_header(); ?>
     </div>
 </div>
 
-<!-- ============================================================
-     LATEST BLOG INSIGHTS SECTION
-     ============================================================ -->
+<!--
+    Displays latest blog posts related to quizzes, Helps users improve knowledge before attempting quizzes.
+    -->
 <div style="background:#1a1d21; padding:80px 0;">
     <div class="container">
 
@@ -685,9 +693,8 @@ get_header(); ?>
     </div>
 </div>
 
-<!-- ============================================================
-     CALL TO ACTION SECTION
-     ============================================================ -->
+<!--
+    Encourages users who are not logged in to register, This section only appears for guests.-->
 <?php if ( ! is_user_logged_in() ) : ?>
 <div style="
     background:linear-gradient(135deg,#0d1117,#1a1a2e);

@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Games Quiz Platform - INFO3602
+ * Team: Varune Rampersad, Josiah Phillip, Ijaaz Sisarran
+ * File: single-quiz.php
+ */
 get_header(); ?>
 
 <div id="intro">
@@ -13,7 +17,7 @@ get_header(); ?>
     <div class="container" style="padding:60px 0;">
 
         <?php
-        // If ?take=1 in URL, show the quiz engine plugin
+        // show the quiz engine plugin
         if ( isset($_GET['take']) && $_GET['take'] == '1' ) :
             $quiz_id = get_queried_object_id();
             echo do_shortcode('[quiz_engine id="' . $quiz_id . '"]');
@@ -57,7 +61,7 @@ get_header(); ?>
 
             <div style="display:grid; grid-template-columns:2fr 1fr; gap:30px;">
 
-                <!-- LEFT COLUMN -->
+                
                 <div>
                     <div style="background:#212529; border:1px solid rgba(255,255,255,0.15); border-radius:10px; overflow:hidden; margin-bottom:30px;">
 
@@ -71,7 +75,7 @@ get_header(); ?>
 
                         <div style="padding:30px;">
 
-                            <!-- Badges -->
+                            <!-- enables Badges -->
                             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:15px;">
                                 <span style="background:<?php echo $diff_color; ?>; color:#fff; padding:4px 14px; border-radius:20px; font-size:13px; font-weight:600;">
                                     <?php echo esc_html( $difficulty_name ); ?>
@@ -83,12 +87,12 @@ get_header(); ?>
                                 <?php endforeach; ?>
                             </div>
 
-                            <!-- Description -->
+                            <!-- enables Description -->
                             <div style="color:rgba(255,255,255,0.8); line-height:1.7; margin-bottom:25px;">
                                 <?php the_content(); ?>
                             </div>
 
-                            <!-- Stats -->
+                            <!-- enables Stats -->
                             <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-bottom:30px;">
                                 <div style="background:rgba(255,255,255,0.05); border-radius:8px; padding:20px; text-align:center;">
                                     <div style="font-size:28px; font-weight:700; color:#13aff0;"><?php echo $total_questions ?: '?'; ?></div>
@@ -104,7 +108,7 @@ get_header(); ?>
                                 </div>
                             </div>
 
-                            <!-- Start Button -->
+                            <!-- Start Button look and functionality -->
                             <?php if ( is_user_logged_in() ) : ?>
                                 <a href="<?php echo esc_url( add_query_arg('take','1',get_permalink()) ); ?>" style="
                                     display:block; text-align:center;
@@ -124,13 +128,13 @@ get_header(); ?>
                         </div>
                     </div>
 
-                    <!-- Comments -->
+                    <!-- enables Comments -->
                     <div style="background:#212529; border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:30px;">
                         <?php comments_template(); ?>
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN -->
+                
                 <div>
                     <div style="background:#212529; border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:25px; margin-bottom:25px;">
                         <h3 style="color:#fff; font-size:16px; font-weight:700; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1);">🏆 Top Players</h3>
@@ -157,7 +161,7 @@ get_header(); ?>
                         <?php endif; ?>
                     </div>
 
-                    <!-- Rules -->
+                    <!-- Rules description -->
                     <div style="background:#212529; border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:25px;">
                         <h3 style="color:#fff; font-size:16px; font-weight:700; margin-bottom:15px;">📋 Quiz Rules</h3>
                         <ul style="list-style:none; padding:0; margin:0;">

@@ -6,25 +6,25 @@
  */
 
 
-// ============================================================
-// 1. ENQUEUE STYLES (Parent → Shuttle Gamer → Child)
-// ============================================================
+
+// This function loads style sheet in the correct order (Parent → Shuttle Gamer → Child)
+
 function shuttle_gamer_child_enqueue_styles() {
 
-    // Load root parent (Shuttle) stylesheet
+    // this one loads root parent (Shuttle) stylesheet
     wp_enqueue_style(
         'shuttle-parent-style',
         get_theme_root_uri() . '/shuttle/style.css'
     );
 
-    // Load Shuttle Gamer stylesheet (middle layer)
+    // this one loads Shuttle Gamer stylesheet (middle layer)
     wp_enqueue_style(
         'shuttle-gamer-style',
         get_theme_root_uri() . '/shuttle-gamer/style.css',
         array( 'shuttle-parent-style' )
     );
 
-    // Load our child theme stylesheet (our customizations)
+    // this one loads our child theme stylesheet 
     wp_enqueue_style(
         'shuttle-gamer-child-style',
         get_stylesheet_directory_uri() . '/style.css',
@@ -35,9 +35,9 @@ function shuttle_gamer_child_enqueue_styles() {
 add_action( 'wp_enqueue_scripts', 'shuttle_gamer_child_enqueue_styles' );
 
 
-// ============================================================
-// 2. APPLY SHUTTLE GAMER SKIN SETTINGS
-// ============================================================
+
+//  allows us to apply the different shuttle skin settings
+
 function shuttle_gamer_child_apply_gamer_settings() {
 
     $name_options_free   = 'shuttle_redux_variables';
@@ -67,14 +67,14 @@ function shuttle_gamer_child_apply_gamer_settings() {
 add_action( 'init', 'shuttle_gamer_child_apply_gamer_settings', 999 );
 
 
-// ============================================================
-// 3. REGISTER CUSTOM POST TYPES
-// ============================================================
+
+// this is used to register our different custom post types
+
 function gamer_register_post_types() {
 
-    // ----------------------------------
-    // CPT 1: Quiz
-    // ----------------------------------
+   
+    // Stores our quiz details including title, description, image, and comments
+    
     register_post_type( 'quiz', array(
         'labels' => array(
             'name'               => 'Quizzes',
@@ -99,9 +99,9 @@ function gamer_register_post_types() {
         'capability_type'   => 'post',
     ));
 
-    // ----------------------------------
-    // CPT 2: Quiz Question
-    // ----------------------------------
+    
+    //  Stores each one of our individual questions linked to a quiz question
+    
     register_post_type( 'quiz_question', array(
         'labels' => array(
             'name'               => 'Quiz Questions',
@@ -126,9 +126,9 @@ function gamer_register_post_types() {
         'capability_type'   => 'post',
     ));
 
-    // ----------------------------------
-    // CPT 3: Leaderboard Entry
-    // ----------------------------------
+    
+    // Stores user scores and performance data for the leaderboard
+    
     register_post_type( 'leaderboard_entry', array(
         'labels' => array(
             'name'               => 'Leaderboard Entries',
@@ -153,9 +153,9 @@ function gamer_register_post_types() {
         'capability_type'   => 'post',
     ));
 
-    // ----------------------------------
-    // CPT 4: Blog Insight
-    // ----------------------------------
+    
+    // Stores blog-style educational content related to quizzes
+   
     register_post_type( 'blog_insight', array(
         'labels' => array(
             'name'               => 'Blog Insights',
@@ -183,9 +183,9 @@ function gamer_register_post_types() {
 add_action( 'init', 'gamer_register_post_types' );
 
 
-// ============================================================
-// 4. REGISTER CUSTOM TAXONOMIES
-// ============================================================
+
+// use to register taxonomiesquiz_genre, quiz_difficulty, insight_category
+
 function gamer_register_taxonomies() {
 
     // Genre Taxonomy (for Quizzes)
@@ -228,7 +228,7 @@ function gamer_register_taxonomies() {
         'rewrite'           => array( 'slug' => 'difficulty' ),
     ));
 
-    // Insight Category Taxonomy (for Blog Insights)
+    //Blog Insights
     register_taxonomy( 'insight_category', array( 'blog_insight' ), array(
         'labels' => array(
             'name'              => 'Insight Categories',
@@ -251,12 +251,11 @@ function gamer_register_taxonomies() {
 add_action( 'init', 'gamer_register_taxonomies' );
 
 
-// ============================================================
-// 5. REGISTER CUSTOM META BOXES (Custom Fields - Pure PHP)
-// ============================================================
+
+// Adds custom meta boxes (input fields) to admin pages
 function gamer_register_meta_boxes() {
 
-    // Quiz Details Meta Box
+    
     add_meta_box(
         'quiz_details',
         'Quiz Details',
@@ -266,7 +265,7 @@ function gamer_register_meta_boxes() {
         'high'
     );
 
-    // Quiz Question Details Meta Box
+    
     add_meta_box(
         'question_details',
         'Question Details',
@@ -276,7 +275,7 @@ function gamer_register_meta_boxes() {
         'high'
     );
 
-    // Leaderboard Entry Details Meta Box
+    
     add_meta_box(
         'leaderboard_details',
         'Leaderboard Entry Details',
@@ -286,7 +285,7 @@ function gamer_register_meta_boxes() {
         'high'
     );
 
-    // Blog Insight Details Meta Box
+   
     add_meta_box(
         'insight_details',
         'Insight Details',
@@ -299,9 +298,9 @@ function gamer_register_meta_boxes() {
 add_action( 'add_meta_boxes', 'gamer_register_meta_boxes' );
 
 
-// ----------------------------------
-// Quiz Details Fields
-// ----------------------------------
+
+// Displays custom fields for quiz settings (time, questions, passing score)
+
 function gamer_quiz_details_callback( $post ) {
     wp_nonce_field( 'gamer_save_quiz_details', 'gamer_quiz_nonce' );
     $time_limit     = get_post_meta( $post->ID, '_quiz_time_limit', true );
@@ -338,9 +337,9 @@ function gamer_quiz_details_callback( $post ) {
 }
 
 
-// ----------------------------------
-// Quiz Question Details Fields
-// ----------------------------------
+
+// Displays fields for quiz options and correct answer
+
 function gamer_question_details_callback( $post ) {
     wp_nonce_field( 'gamer_save_question_details', 'gamer_question_nonce' );
     $related_quiz  = get_post_meta( $post->ID, '_question_quiz_id', true );
@@ -350,7 +349,7 @@ function gamer_question_details_callback( $post ) {
     $option_d      = get_post_meta( $post->ID, '_question_option_d', true );
     $correct       = get_post_meta( $post->ID, '_question_correct_answer', true );
 
-    // Get all quizzes for the dropdown
+    // quiz dropdown menu
     $quizzes = get_posts( array( 'post_type' => 'quiz', 'numberposts' => -1 ) );
     ?>
     <table class="form-table">
@@ -405,9 +404,9 @@ function gamer_question_details_callback( $post ) {
 }
 
 
-// ----------------------------------
-// Leaderboard Entry Details Fields
-// ----------------------------------
+
+// Displays fields for user score, percentage, and time taken
+
 function gamer_leaderboard_details_callback( $post ) {
     wp_nonce_field( 'gamer_save_leaderboard_details', 'gamer_leaderboard_nonce' );
     $user_id    = get_post_meta( $post->ID, '_leaderboard_user_id', true );
@@ -474,9 +473,9 @@ function gamer_leaderboard_details_callback( $post ) {
 }
 
 
-// ----------------------------------
-// Blog Insight Details Fields
-// ----------------------------------
+
+// Displays fields for related quiz and reading time
+
 function gamer_insight_details_callback( $post ) {
     wp_nonce_field( 'gamer_save_insight_details', 'gamer_insight_nonce' );
     $related_quiz = get_post_meta( $post->ID, '_insight_related_quiz', true );
@@ -508,12 +507,12 @@ function gamer_insight_details_callback( $post ) {
 }
 
 
-// ============================================================
-// 6. SAVE ALL META BOX DATA
-// ============================================================
+
+// Saves data entered in meta boxes securely
+
 function gamer_save_meta_boxes( $post_id ) {
 
-    // ---- Save Quiz Details ----
+    
     if ( isset( $_POST['gamer_quiz_nonce'] ) &&
         wp_verify_nonce( $_POST['gamer_quiz_nonce'], 'gamer_save_quiz_details' ) ) {
 
@@ -527,7 +526,7 @@ function gamer_save_meta_boxes( $post_id ) {
             update_post_meta( $post_id, '_quiz_passing_score', sanitize_text_field( $_POST['quiz_passing_score'] ) );
     }
 
-    // ---- Save Question Details ----
+    
     if ( isset( $_POST['gamer_question_nonce'] ) &&
         wp_verify_nonce( $_POST['gamer_question_nonce'], 'gamer_save_question_details' ) ) {
 
@@ -550,7 +549,7 @@ function gamer_save_meta_boxes( $post_id ) {
             update_post_meta( $post_id, '_question_correct_answer', sanitize_text_field( $_POST['question_correct_answer'] ) );
     }
 
-    // ---- Save Leaderboard Entry Details ----
+    
     if ( isset( $_POST['gamer_leaderboard_nonce'] ) &&
         wp_verify_nonce( $_POST['gamer_leaderboard_nonce'], 'gamer_save_leaderboard_details' ) ) {
 
@@ -573,7 +572,7 @@ function gamer_save_meta_boxes( $post_id ) {
             update_post_meta( $post_id, '_leaderboard_time_taken', sanitize_text_field( $_POST['leaderboard_time_taken'] ) );
     }
 
-    // ---- Save Blog Insight Details ----
+    
     if ( isset( $_POST['gamer_insight_nonce'] ) &&
         wp_verify_nonce( $_POST['gamer_insight_nonce'], 'gamer_save_insight_details' ) ) {
 
@@ -587,16 +586,16 @@ function gamer_save_meta_boxes( $post_id ) {
 add_action( 'save_post', 'gamer_save_meta_boxes' );
 
 
-// ============================================================
-// 7. REGISTER CUSTOM USER ROLES
-// ============================================================
+
+// Creates custom user roles and defines permissions 
+
 function gamer_register_user_roles() {
 
-    // Remove roles first to avoid duplication on repeated loads
+    
     remove_role( 'quiz_master' );
     remove_role( 'player' );
 
-    // Role 1: Quiz Master - can create and manage quizzes
+    // Quiz Master can create, edit, and manage quizzes and content
     add_role( 'quiz_master', 'Quiz Master', array(
         'read'                   => true,
         'edit_posts'             => true,
@@ -610,7 +609,7 @@ function gamer_register_user_roles() {
         'manage_categories'      => true,
     ));
 
-    // Role 2: Player - can take quizzes, comment, view leaderboard
+    // Player has limited access: can only view and interact with quizzes
     add_role( 'player', 'Player', array(
         'read'          => true,
         'edit_posts'    => false,
@@ -622,9 +621,9 @@ function gamer_register_user_roles() {
 add_action( 'init', 'gamer_register_user_roles' );
 
 
-// ============================================================
-// 8. FLUSH REWRITE RULES ON THEME SWITCH
-// ============================================================
+
+// Flushes rewrite rules when theme is activated
+
 function gamer_flush_rewrite_rules() {
     gamer_register_post_types();
     flush_rewrite_rules();

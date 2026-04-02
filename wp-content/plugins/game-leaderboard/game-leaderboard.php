@@ -2,16 +2,15 @@
 /*
 Plugin Name: Game Leaderboard
 Description: Global leaderboard with quiz filter dropdown
-Version: 3.0
-Author: Your Name
+Author: Varune Rampersad
 */
 
 function gl_filtered_leaderboard() {
 
-    // Get selected quiz
+    // gest the selected quiz
     $selected_quiz = isset($_GET['quiz_filter']) ? intval($_GET['quiz_filter']) : 0;
 
-    // Get all quizzes
+    // gets all  the quizzes
     $quizzes = get_posts(array(
         'post_type' => 'quiz',
         'posts_per_page' => -1
@@ -22,9 +21,7 @@ function gl_filtered_leaderboard() {
     echo '<div style="padding:40px 0;">';
     echo '<h1 style="color:#fff; margin-bottom:30px;">🏆 Leaderboard</h1>';
 
-    // =====================
-    // DROPDOWN FILTER FORM
-    // =====================
+    // Create dropdown filter so users can choose which quiz leaderboard to view, Form uses GET so the selected quiz appears in the URL
     echo '<form method="GET" style="margin-bottom:30px;">';
     echo '<select name="quiz_filter" onchange="this.form.submit()" style="
         padding:10px 15px;
@@ -44,9 +41,7 @@ function gl_filtered_leaderboard() {
     echo '</select>';
     echo '</form>';
 
-    // =====================
-    // BUILD QUERY
-    // =====================
+    // Build query to retrieve leaderboard entries from the database, Results are ordered by highest percentage score
     $args = array(
         'post_type' => 'leaderboard_entry',
         'posts_per_page' => 20,
@@ -55,7 +50,7 @@ function gl_filtered_leaderboard() {
         'order' => 'DESC'
     );
 
-    // Filter by quiz if selected
+    //If a specific quiz is selected, filter results to only show that quiz
     if ($selected_quiz) {
         $args['meta_query'] = array(
             array(
@@ -68,9 +63,7 @@ function gl_filtered_leaderboard() {
 
     $leaderboard = new WP_Query($args);
 
-    // =====================
-    // DISPLAY TABLE
-    // =====================
+    // Display leaderboard results in a table format, Shows rank, player name, quiz, score, and percentage
     if ($leaderboard->have_posts()) {
 
         echo '<table style="width:100%; border-collapse:collapse; color:#fff;">';
@@ -83,7 +76,7 @@ function gl_filtered_leaderboard() {
               </tr>';
 
         $rank = 1;
-
+        // Loop through each leaderboard entry and display player data
         while ($leaderboard->have_posts()) {
             $leaderboard->the_post();
 
