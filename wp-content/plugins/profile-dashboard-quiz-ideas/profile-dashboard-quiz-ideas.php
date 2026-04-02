@@ -3,7 +3,7 @@
 Plugin Name: Profile Dashboard & Quiz Ideas
 Description: Adds a My Profile dashboard with quiz stats, recent activity, and a front-end quiz idea submission form.
 Version: 1.0.0
-Author: OpenAI
+Author: varune, Josiah, ijaaz
 */
 
 if (!defined('ABSPATH')) {
@@ -133,9 +133,16 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
     public function render_dashboard_shortcode() {
         wp_enqueue_style('pdqi-profile-dashboard');
 
-        if (!is_user_logged_in()) {
-            return '<div class="pdqi-wrap"><div class="pdqi-panel"><h3>Login Required</h3><p>Please log in to view your profile dashboard and submit quiz ideas.</p></div></div>';
-        }
+            if (!is_user_logged_in()) {
+        return '
+        <div class="pdqi-wrap">
+            <div class="pdqi-panel">
+                <h3>Login Required</h3>
+                <p>Please log in to view your profile dashboard and submit quiz ideas.</p>
+                <a href="' . wp_login_url(get_permalink()) . '" class="pdqi-button">Login</a>
+            </div>
+        </div>';
+    }
 
         $user            = wp_get_current_user();
         $user_id         = $user->ID;
