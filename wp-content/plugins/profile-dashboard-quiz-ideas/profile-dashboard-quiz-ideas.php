@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Profile Dashboard & Quiz Ideas
-Description: Adds a My Profile dashboard with quiz stats, recent activity, and a front-end quiz idea submission form.
-Version: 1.0.0
-Author: varune, Josiah, ijaaz
+Description: Adds a My Profile dashboard with quiz stats, recent activity, a front-end quiz idea submission form, and a public approved quiz ideas page.
+Version: 1.1.2
+Author: Josiah
 */
 
 if (!defined('ABSPATH')) {
@@ -20,6 +20,7 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
         add_action('init', array($this, 'handle_form_submission'));
         add_shortcode('my_profile_dashboard', array($this, 'render_dashboard_shortcode'));
+        add_shortcode('all_quiz_ideas', array($this, 'render_all_quiz_ideas_shortcode'));
         add_filter('manage_quiz_idea_posts_columns', array($this, 'admin_columns'));
         add_action('manage_quiz_idea_posts_custom_column', array($this, 'admin_column_content'), 10, 2);
     }
@@ -39,14 +40,14 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
                 'not_found_in_trash' => 'No quiz ideas found in trash',
                 'menu_name'          => 'Quiz Ideas',
             ),
-            'public'              => false,
-            'show_ui'             => true,
-            'show_in_menu'        => true,
-            'show_in_rest'        => true,
-            'supports'            => array('title', 'editor', 'author'),
-            'menu_icon'           => 'dashicons-lightbulb',
-            'capability_type'     => 'post',
-            'map_meta_cap'        => true,
+            'public'          => false,
+            'show_ui'         => true,
+            'show_in_menu'    => true,
+            'show_in_rest'    => true,
+            'supports'        => array('title', 'editor', 'author'),
+            'menu_icon'       => 'dashicons-lightbulb',
+            'capability_type' => 'post',
+            'map_meta_cap'    => true,
         ));
     }
 
@@ -64,7 +65,7 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
             'pdqi-profile-dashboard',
             plugin_dir_url(__FILE__) . 'assets/profile-dashboard-quiz-ideas.css',
             array(),
-            '1.0.0'
+            '1.1.2'
         );
     }
 
@@ -77,15 +78,21 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
             return;
         }
 
-        if (!isset($_POST[self::NONCE_NAME]) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST[self::NONCE_NAME])), self::NONCE_ACTION)) {
+        if (
+            !isset($_POST[self::NONCE_NAME]) ||
+            !wp_verify_nonce(
+                sanitize_text_field(wp_unslash($_POST[self::NONCE_NAME])),
+                self::NONCE_ACTION
+            )
+        ) {
             return;
         }
 
-        $user_id      = get_current_user_id();
-        $title        = isset($_POST['pdqi_title']) ? sanitize_text_field(wp_unslash($_POST['pdqi_title'])) : '';
-        $description  = isset($_POST['pdqi_description']) ? wp_kses_post(wp_unslash($_POST['pdqi_description'])) : '';
-        $genre        = isset($_POST['pdqi_genre']) ? sanitize_text_field(wp_unslash($_POST['pdqi_genre'])) : '';
-        $difficulty   = isset($_POST['pdqi_difficulty']) ? sanitize_text_field(wp_unslash($_POST['pdqi_difficulty'])) : '';
+        $user_id     = get_current_user_id();
+        $title       = isset($_POST['pdqi_title']) ? sanitize_text_field(wp_unslash($_POST['pdqi_title'])) : '';
+        $description = isset($_POST['pdqi_description']) ? wp_kses_post(wp_unslash($_POST['pdqi_description'])) : '';
+        $genre       = isset($_POST['pdqi_genre']) ? sanitize_text_field(wp_unslash($_POST['pdqi_genre'])) : '';
+        $difficulty  = isset($_POST['pdqi_difficulty']) ? sanitize_text_field(wp_unslash($_POST['pdqi_difficulty'])) : '';
 
         if ($title === '' || $description === '') {
             $redirect = add_query_arg('pdqi_status', 'missing', wp_get_referer() ? wp_get_referer() : home_url('/'));
@@ -110,16 +117,16 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
         update_post_meta($post_id, '_pdqi_submitted_by', $user_id);
 
         if ($genre !== '') {
-            if (taxonomy_exists('quiz_genre') && term_exists((int)$genre, 'quiz_genre')) {
-                wp_set_object_terms($post_id, array((int)$genre), 'quiz_genre', false);
+            if (taxonomy_exists('quiz_genre') && term_exists((int) $genre, 'quiz_genre')) {
+                wp_set_object_terms($post_id, array((int) $genre), 'quiz_genre', false);
             } else {
                 update_post_meta($post_id, '_pdqi_quiz_genre_text', $genre);
             }
         }
 
         if ($difficulty !== '') {
-            if (taxonomy_exists('quiz_difficulty') && term_exists((int)$difficulty, 'quiz_difficulty')) {
-                wp_set_object_terms($post_id, array((int)$difficulty), 'quiz_difficulty', false);
+            if (taxonomy_exists('quiz_difficulty') && term_exists((int) $difficulty, 'quiz_difficulty')) {
+                wp_set_object_terms($post_id, array((int) $difficulty), 'quiz_difficulty', false);
             } else {
                 update_post_meta($post_id, '_pdqi_quiz_difficulty_text', $difficulty);
             }
@@ -133,16 +140,16 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
     public function render_dashboard_shortcode() {
         wp_enqueue_style('pdqi-profile-dashboard');
 
-            if (!is_user_logged_in()) {
-        return '
-        <div class="pdqi-wrap">
-            <div class="pdqi-panel">
-                <h3>Login Required</h3>
-                <p>Please log in to view your profile dashboard and submit quiz ideas.</p>
-                <a href="' . wp_login_url(get_permalink()) . '" class="pdqi-button">Login</a>
-            </div>
-        </div>';
-    }
+        if (!is_user_logged_in()) {
+            return '
+            <div class="pdqi-wrap">
+                <div class="pdqi-panel">
+                    <h3>Login Required</h3>
+                    <p>Please log in to view your profile dashboard and submit quiz ideas.</p>
+                    <a href="' . esc_url(wp_login_url(get_permalink())) . '" class="pdqi-button">Login</a>
+                </div>
+            </div>';
+        }
 
         $user            = wp_get_current_user();
         $user_id         = $user->ID;
@@ -240,42 +247,11 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
                                 <div class="pdqi-list-item">
                                     <div class="pdqi-list-main">
                                         <div class="pdqi-list-title"><?php echo esc_html($idea['title']); ?></div>
-                                        <div class="pdqi-list-meta">
-                                            <?php
-                                                $genre_name = '';
-                                                $difficulty_name = '';
-
-                                                // Genre
-                                                if (!empty($idea['genre'])) {
-                                                    if (is_numeric($idea['genre'])) {
-                                                        $term = get_term((int)$idea['genre']);
-                                                        if ($term && !is_wp_error($term)) {
-                                                            $genre_name = $term->name;
-                                                        }
-                                                    } else {
-                                                        $genre_name = $idea['genre'];
-                                                    }
-                                                }
-
-                                                // Difficulty
-                                                if (!empty($idea['difficulty'])) {
-                                                    if (is_numeric($idea['difficulty'])) {
-                                                        $term = get_term((int)$idea['difficulty']);
-                                                        if ($term && !is_wp_error($term)) {
-                                                            $difficulty_name = $term->name;
-                                                        }
-                                                    } else {
-                                                        $difficulty_name = $idea['difficulty'];
-                                                    }
-                                                }
-                                                ?>
-
-                                                <?php if ($genre_name || $difficulty_name) : ?>
-                                                    <div class="pdqi-list-meta">
-                                                        <?php echo esc_html(trim($genre_name . ' • ' . $difficulty_name, ' •')); ?>
-                                                    </div>
-                                                <?php endif; ?>
-                                        </div>
+                                        <?php if (!empty($idea['genre']) || !empty($idea['difficulty'])) : ?>
+                                            <div class="pdqi-list-meta">
+                                                <?php echo esc_html(trim($idea['genre'] . ' • ' . $idea['difficulty'], ' •')); ?>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="pdqi-badge pdqi-status-<?php echo esc_attr($idea['status']); ?>">
                                         <?php echo esc_html(ucfirst($idea['status'])); ?>
@@ -323,6 +299,106 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
             </div>
         </div>
         <?php
+        return ob_get_clean();
+    }
+
+    public function render_all_quiz_ideas_shortcode($atts) {
+        wp_enqueue_style('pdqi-profile-dashboard');
+
+        $atts = shortcode_atts(
+            array(
+                'posts_per_page' => 12,
+                'title'          => 'Community Quiz Ideas',
+                'show_author'    => 'yes',
+            ),
+            $atts,
+            'all_quiz_ideas'
+        );
+
+        $ideas = get_posts(array(
+            'post_type'      => 'quiz_idea',
+            'posts_per_page' => absint($atts['posts_per_page']),
+            'post_status'    => 'publish',
+            'orderby'        => 'date',
+            'order'          => 'DESC',
+        ));
+
+        ob_start();
+        ?>
+        <div class="pdqi-wrap">
+            <div class="pdqi-panel pdqi-hero">
+                <div>
+                    <div class="pdqi-eyebrow">Community Quiz Ideas</div>
+                    <h2><?php echo esc_html($atts['title']); ?></h2>
+                    <p>Browse approved quiz ideas shared by users across the platform.</p>
+                </div>
+            </div>
+
+            <?php if (!empty($ideas)) : ?>
+                <div class="pdqi-community-grid">
+                    <?php foreach ($ideas as $idea_post) : ?>
+                        <?php
+                        $idea_id = $idea_post->ID;
+
+                        $genre_terms      = taxonomy_exists('quiz_genre') ? get_the_terms($idea_id, 'quiz_genre') : false;
+                        $difficulty_terms = taxonomy_exists('quiz_difficulty') ? get_the_terms($idea_id, 'quiz_difficulty') : false;
+
+                        if (!is_wp_error($genre_terms) && !empty($genre_terms)) {
+                            $genre = $genre_terms[0]->name;
+                        } else {
+                            $genre_meta = get_post_meta($idea_id, '_pdqi_quiz_genre_text', true);
+                            if (is_numeric($genre_meta) && taxonomy_exists('quiz_genre')) {
+                                $genre_term = get_term((int) $genre_meta, 'quiz_genre');
+                                $genre = ($genre_term && !is_wp_error($genre_term)) ? $genre_term->name : '';
+                            } else {
+                                $genre = $genre_meta;
+                            }
+                        }
+
+                        if (!is_wp_error($difficulty_terms) && !empty($difficulty_terms)) {
+                            $difficulty = $difficulty_terms[0]->name;
+                        } else {
+                            $difficulty_meta = get_post_meta($idea_id, '_pdqi_quiz_difficulty_text', true);
+                            if (is_numeric($difficulty_meta) && taxonomy_exists('quiz_difficulty')) {
+                                $difficulty_term = get_term((int) $difficulty_meta, 'quiz_difficulty');
+                                $difficulty = ($difficulty_term && !is_wp_error($difficulty_term)) ? $difficulty_term->name : '';
+                            } else {
+                                $difficulty = $difficulty_meta;
+                            }
+                        }
+
+                        $author_name = get_the_author_meta('display_name', $idea_post->post_author);
+                        ?>
+                        <article class="pdqi-community-card">
+                            <div class="pdqi-community-top">
+                                <h3><?php echo esc_html(get_the_title($idea_id)); ?></h3>
+                                <div class="pdqi-badge pdqi-status-publish">Approved</div>
+                            </div>
+
+                            <div class="pdqi-list-meta">
+                                <?php if ('yes' === strtolower($atts['show_author'])) : ?>
+                                    <span>By <?php echo esc_html($author_name); ?></span>
+                                <?php endif; ?>
+
+                                <?php if (!empty($genre) || !empty($difficulty)) : ?>
+                                    <span><?php echo esc_html(trim($genre . ' • ' . $difficulty, ' •')); ?></span>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="pdqi-community-content">
+                                <?php echo wp_kses_post(wpautop(wp_trim_words($idea_post->post_content, 35))); ?>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            <?php else : ?>
+                <div class="pdqi-panel">
+                    <p>No approved quiz ideas are available yet.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+        <?php
+
         return ob_get_clean();
     }
 
@@ -375,12 +451,12 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
         $average = $attempts > 0 ? round($sum / $attempts, 1) : 0;
 
         return array(
-            'attempts'            => $attempts,
-            'best_score'          => rtrim(rtrim(number_format($best, 1, '.', ''), '0'), '.'),
-            'average_score'       => rtrim(rtrim(number_format($average, 1, '.', ''), '0'), '.'),
-            'perfect_scores'      => $perfect,
-            'top_three_finishes'  => $this->count_top_three_finishes($user_id),
-            'quiz_ideas_count'    => (int) count_user_posts($user_id, 'quiz_idea', true),
+            'attempts'           => $attempts,
+            'best_score'         => rtrim(rtrim(number_format($best, 1, '.', ''), '0'), '.'),
+            'average_score'      => rtrim(rtrim(number_format($average, 1, '.', ''), '0'), '.'),
+            'perfect_scores'     => $perfect,
+            'top_three_finishes' => $this->count_top_three_finishes($user_id),
+            'quiz_ideas_count'   => (int) count_user_posts($user_id, 'quiz_idea', true),
         );
     }
 
@@ -449,9 +525,6 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
                     $top_three_count++;
                     break;
                 }
-                if ($rank >= 3 && (int) $entry_user !== (int) $user_id) {
-                    continue;
-                }
             }
         }
 
@@ -478,12 +551,12 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
         foreach ($entries as $entry) {
             $quiz_id = (int) get_post_meta($entry->ID, '_leaderboard_quiz_id', true);
             $results[] = array(
-                'quiz_title'  => $quiz_id ? get_the_title($quiz_id) : 'Unknown Quiz',
-                'score'       => (string) get_post_meta($entry->ID, '_leaderboard_score', true),
-                'total'       => (string) get_post_meta($entry->ID, '_leaderboard_total', true),
-                'percentage'  => (string) get_post_meta($entry->ID, '_leaderboard_percentage', true),
-                'time_taken'  => (string) get_post_meta($entry->ID, '_leaderboard_time_taken', true),
-                'date'        => get_the_date('M j, Y', $entry),
+                'quiz_title' => $quiz_id ? get_the_title($quiz_id) : 'Unknown Quiz',
+                'score'      => (string) get_post_meta($entry->ID, '_leaderboard_score', true),
+                'total'      => (string) get_post_meta($entry->ID, '_leaderboard_total', true),
+                'percentage' => (string) get_post_meta($entry->ID, '_leaderboard_percentage', true),
+                'time_taken' => (string) get_post_meta($entry->ID, '_leaderboard_time_taken', true),
+                'date'       => get_the_date('M j, Y', $entry),
             );
         }
 
@@ -502,17 +575,41 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
 
         $results = array();
         foreach ($posts as $post) {
-            $genre_terms = taxonomy_exists('quiz_genre') ? get_the_terms($post->ID, 'quiz_genre') : false;
+            $genre_terms      = taxonomy_exists('quiz_genre') ? get_the_terms($post->ID, 'quiz_genre') : false;
             $difficulty_terms = taxonomy_exists('quiz_difficulty') ? get_the_terms($post->ID, 'quiz_difficulty') : false;
-            $genre = (!is_wp_error($genre_terms) && !empty($genre_terms)) ? $genre_terms[0]->name : get_post_meta($post->ID, '_pdqi_quiz_genre_text', true);
-            $difficulty = (!is_wp_error($difficulty_terms) && !empty($difficulty_terms)) ? $difficulty_terms[0]->name : get_post_meta($post->ID, '_pdqi_quiz_difficulty_text', true);
+
+            if (!is_wp_error($genre_terms) && !empty($genre_terms)) {
+                $genre = $genre_terms[0]->name;
+            } else {
+                $genre_meta = get_post_meta($post->ID, '_pdqi_quiz_genre_text', true);
+                if (is_numeric($genre_meta) && taxonomy_exists('quiz_genre')) {
+                    $genre_term = get_term((int) $genre_meta, 'quiz_genre');
+                    $genre = ($genre_term && !is_wp_error($genre_term)) ? $genre_term->name : '';
+                } else {
+                    $genre = $genre_meta;
+                }
+            }
+
+            if (!is_wp_error($difficulty_terms) && !empty($difficulty_terms)) {
+                $difficulty = $difficulty_terms[0]->name;
+            } else {
+                $difficulty_meta = get_post_meta($post->ID, '_pdqi_quiz_difficulty_text', true);
+                if (is_numeric($difficulty_meta) && taxonomy_exists('quiz_difficulty')) {
+                    $difficulty_term = get_term((int) $difficulty_meta, 'quiz_difficulty');
+                    $difficulty = ($difficulty_term && !is_wp_error($difficulty_term)) ? $difficulty_term->name : '';
+                } else {
+                    $difficulty = $difficulty_meta;
+                }
+            }
+
             $results[] = array(
                 'title'      => $post->post_title,
                 'status'     => $post->post_status,
-                'genre'      => $genre ? $genre : 'No genre selected',
+                'genre'      => $genre,
                 'difficulty' => $difficulty,
             );
         }
+
         return $results;
     }
 
@@ -582,7 +679,13 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
             if (!is_wp_error($terms) && !empty($terms)) {
                 echo esc_html($terms[0]->name);
             } else {
-                echo esc_html(get_post_meta($post_id, '_pdqi_quiz_genre_text', true));
+                $genre_meta = get_post_meta($post_id, '_pdqi_quiz_genre_text', true);
+                if (is_numeric($genre_meta) && taxonomy_exists('quiz_genre')) {
+                    $genre_term = get_term((int) $genre_meta, 'quiz_genre');
+                    echo esc_html(($genre_term && !is_wp_error($genre_term)) ? $genre_term->name : '');
+                } else {
+                    echo esc_html($genre_meta);
+                }
             }
         }
 
@@ -591,7 +694,13 @@ class PDQI_Profile_Dashboard_Quiz_Ideas {
             if (!is_wp_error($terms) && !empty($terms)) {
                 echo esc_html($terms[0]->name);
             } else {
-                echo esc_html(get_post_meta($post_id, '_pdqi_quiz_difficulty_text', true));
+                $difficulty_meta = get_post_meta($post_id, '_pdqi_quiz_difficulty_text', true);
+                if (is_numeric($difficulty_meta) && taxonomy_exists('quiz_difficulty')) {
+                    $difficulty_term = get_term((int) $difficulty_meta, 'quiz_difficulty');
+                    echo esc_html(($difficulty_term && !is_wp_error($difficulty_term)) ? $difficulty_term->name : '');
+                } else {
+                    echo esc_html($difficulty_meta);
+                }
             }
         }
     }
