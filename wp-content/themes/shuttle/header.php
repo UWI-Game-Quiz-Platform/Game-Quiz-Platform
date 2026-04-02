@@ -55,8 +55,6 @@
 
 		<?php /* Add sticky header */ shuttle_input_headersticky(); ?>
 
-		<?php /* Custom Slider */ shuttle_input_sliderhome(); ?>
-
 		<?php /* Custom Intro - Above */ shuttle_custom_introabove(); ?>
 
 		<?php /* Add header - above slider */ shuttle_input_headerlocationbelow(); ?>
@@ -70,7 +68,6 @@
 	<!-- header -->
 
 	<?php /*  Call To Action - Intro */ shuttle_input_ctaintro(); ?>
-	<?php /*  Pre-Designed HomePage Content */ shuttle_input_homepagesection(); ?>
 
 	<div id="content">
 	<div id="content-core">
